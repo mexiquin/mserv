@@ -1,0 +1,7 @@
+/.vscode
+/build
+/dist
+mserv.spec
+/__pycache__
+/bin
+/Server
