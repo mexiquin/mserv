@@ -130,9 +130,9 @@ def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimu
         # Networking IP information
     print(Fore.YELLOW + Style.BRIGHT + 'Gathering Network Information...\n')
     hostname = socket.gethostname()
-    IP_Ad = socket.gethostbyname(hostname)
+    IP_Ad = requests.get('http://ip.42.pl/raw').text
     print(
-        Fore.CYAN + Style.BRIGHT + "Hostname: {hostname}\nIP Address: {IP_Ad}\nPort:25565")
+        Fore.CYAN + Style.BRIGHT + f"Hostname: {hostname}\nIP Address: {IP_Ad}\nPort:25565")
 
     print("Starting Server...")
     subprocess.run(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir, 'server.jar')}", f"{gui}"],
