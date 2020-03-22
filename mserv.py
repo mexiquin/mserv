@@ -59,7 +59,7 @@ def download_to_dir(url, outDir=os.getcwd()):
     Keyword Arguments:
         outDir {str} -- Directory to save the file to (default: {os.getcwd()})
     """
-    requestor = requests.get(url)
+    requestor = requests.get(url, stream=True)
     fileName = fileNameFromURL(url)
     directory = os.path.join(outDir, fileName)
     # Exception handling for the HTTPS request
@@ -104,8 +104,6 @@ def eula_true():
 def setup():
     """Runs functions that generate the server files before running
     """
-    print(Fore.YELLOW + Style.BRIGHT + 'Downloading server files...')
-
     if not os.path.isdir(serverDir):
         print("Server folder doesn't exist. Generating...")
         os.mkdir(serverDir)
@@ -124,7 +122,7 @@ def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimu
     if first_launch:
         subprocess.run(
             ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir, 'server.jar')}", f"{gui}"],
-            cwd=serverDir)
+            cwd=serverDir, stdout=subprocess.DEVNULL)
         return
 
         # Networking IP information
