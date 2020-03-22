@@ -17,6 +17,9 @@ This script/binary can not:
 - Manage multiple servers/worlds (Yet!)
 - Execute multiple servers at the same time (Probably wont implement...)
 
+# Installation
+
+
 # Generated Help Page
 ```usage: mserv.py [-h] {setup,run,update,test} ...
 

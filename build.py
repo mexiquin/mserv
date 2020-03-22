@@ -20,5 +20,6 @@ def build(input_file: str, one_file=True):
                     "--distpath", "./bin", 
                     input_file])
 
+
 if __name__ == "__main__":
     argh.dispatch_command(build)

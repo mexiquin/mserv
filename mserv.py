@@ -1,17 +1,15 @@
 import os
-import argparse
 import requests
-import platform
 import socket
-import sys
 from bs4 import BeautifulSoup
 import argh
-import re
 import subprocess
 from clint.textui import progress
-
+from colorama import Fore, Back, Style, init
+init(autoreset=True)
 serverDir = os.path.join(os.getcwd(), 'Server')
 url = "https://www.minecraft.net/en-us/download/server/"
+
 
 def file_webscraper(url=url, search_file='server.jar'):
     """Searches a specified webpage searching for a hyperlink to a specified file
@@ -30,22 +28,27 @@ def file_webscraper(url=url, search_file='server.jar'):
             if search_file in link.get("href"):
                 return link.get('href')
 
+
 # use this to execute functions you want to try
 def test():
     """For debugging only
     """
     pass
 
+
 def fileNameFromURL(url):
     # Extracts the filename from a given url
     if url.find('/'):
         return url.rsplit('/', 1)[1]
 
+
 def update():
-    """Goes to the official Mojang website and downloads the server.jar file again. This works whether or not the executable is new"""
+    """Goes to the official Mojang website and downloads the server.jar file again. This works whether or not the
+    executable is new """
     # identify where the server.jar file is located
     os.remove(f"{os.path.join(serverDir, 'server.jar')}")
     download_to_dir(file_webscraper(), serverDir)
+
 
 def download_to_dir(url, outDir=os.getcwd()):
     """Downloads a file from a url and saves it in the specified output directory
@@ -63,14 +66,14 @@ def download_to_dir(url, outDir=os.getcwd()):
     try:
         requestor.raise_for_status()
     except Exception as urlOof:
-        print("Error in accessing URL: %s", urlOof)
+        print(Fore.RED + "Error in accessing URL: %s", urlOof)
         input("Press ENTER to continue...")
 
-    print("Downloading %s" % fileName)
+    print(Fore.YELLOW + Style.BRIGHT + "Downloading %s" % fileName)
     # Some exception handling for file writing stuff
     with open(directory, "wb") as file:
         total_length = int(requestor.headers.get('content-length'))
-        for chunk in progress.bar(requestor.iter_content(chunk_size=1024), expected_size=(total_length/1024)+1):
+        for chunk in progress.bar(requestor.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
             if chunk:
                 file.write(chunk)
                 file.flush()
@@ -101,7 +104,7 @@ def eula_true():
 def setup():
     """Runs functions that generate the server files before running
     """
-    print('Downloading server files...')
+    print(Fore.YELLOW + Style.BRIGHT + 'Downloading server files...')
 
     if not os.path.isdir(serverDir):
         print("Server folder doesn't exist. Generating...")
@@ -109,25 +112,32 @@ def setup():
     download_to_dir(file_webscraper(), serverDir)
     run(first_launch=True)
     eula_true()
-    print('\n\nEULA Accepted and server is ready to go!!')
+    print(Fore.GREEN + Style.BRIGHT + '\nEULA Accepted and server is ready to go!!')
 
-def run(max_ram : "Maximum amount of ram alloted" = "-Xmx1024M", min_ram:"Minimum amount of ram alloted"="-Xms1024M", gui : "if True, will show the Mojang UI, else will remain CLI-based"=False, first_launch:"Backend, used to denote if this is part of the Setup"=False):
+
+def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimum amount of ram alloted" = "-Xms1024M",
+        gui: "if True, will show the Mojang UI, else will remain CLI-based" = False,
+        first_launch: "Backend, used to denote if this is part of the Setup" = False):
     """Executes the server binary with optional parameters
     """
     gui = "nogui" if gui is False else ""
     if first_launch:
-        subprocess.run(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir, 'server.jar')}", f"{gui}"], cwd=serverDir)
-        return 
+        subprocess.run(
+            ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir, 'server.jar')}", f"{gui}"],
+            cwd=serverDir)
+        return
 
-    # Networking IP information
-    print('Gathering Network Information...\n')
+        # Networking IP information
+    print(Fore.YELLOW + Style.BRIGHT + 'Gathering Network Information...\n')
     hostname = socket.gethostname()
     IP_Ad = socket.gethostbyname(hostname)
     print(
-        f"Hostname: {hostname}\nIP Address: {IP_Ad}\nPort:25565")
-    
+        Fore.CYAN + Style.BRIGHT + "Hostname: {hostname}\nIP Address: {IP_Ad}\nPort:25565")
+
     print("Starting Server...")
-    subprocess.run(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir, 'server.jar')}", f"{gui}"], cwd=serverDir)
+    subprocess.run(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir, 'server.jar')}", f"{gui}"],
+                   cwd=serverDir)
+
 
 # TODO
 def GUI():
