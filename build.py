@@ -1,5 +1,5 @@
 import subprocess
-import argh
+#import argh
 import os
 
 def build(input_file: str, one_file=True):
@@ -22,4 +22,4 @@ def build(input_file: str, one_file=True):
 
 
 if __name__ == "__main__":
-    argh.dispatch_command(build)
+    build("mserv.py")
