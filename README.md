@@ -14,7 +14,6 @@ As of right now, it can...
 This script/binary can not:
 - Port forward for you (You have to do that yourself)
 - Update itself (Yet!)
-- Manage multiple servers/worlds (Yet!)
 - Execute multiple servers at the same time (Probably wont implement...)
 
 # Installation
