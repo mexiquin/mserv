@@ -1,4 +1,6 @@
-import os
+#!/usr/bin/env python
+
+import os, time
 import requests
 import socket
 from bs4 import BeautifulSoup
@@ -8,7 +10,7 @@ from clint.textui import progress
 from colorama import Fore, Back, Style, init
 
 init(autoreset=True)
-serverDir = os.path.join(os.getcwd(), 'Server')
+serverDir = {}
 url = "https://www.minecraft.net/en-us/download/server/"
 
 
@@ -29,12 +31,33 @@ def file_webscraper(url=url, search_file='server.jar'):
             if search_file in link.get("href"):
                 return link.get('href')
 
+def identify_servers(path=os.getcwd()):
+    # Identify any potential servers in current directory
+    for subdir, _, filenames in walklevel(os.getcwd()):
+        if "server.jar" in filenames:
+            if os.path.basename(os.path.normpath(subdir)) in serverDir:
+                serverDir[os.path.basename(os.path.normpath(subdir))].append(subdir)
+            else:
+                serverDir[os.path.basename(os.path.normpath(subdir))] = subdir
+
+
 
 # use this to execute functions you want to try
 def test():
     """For debugging only
     """
     print(serverDir)
+
+# os.walk, but allows for level distinction
+def walklevel(some_dir, level=1):
+    some_dir = some_dir.rstrip(os.path.sep)
+    assert os.path.isdir(some_dir)
+    num_sep = some_dir.count(os.path.sep)
+    for root, dirs, files in os.walk(some_dir):
+        yield root, dirs, files
+        num_sep_this = root.count(os.path.sep)
+        if num_sep + level <= num_sep_this:
+            del dirs[:]
 
 
 def fileNameFromURL(url):
@@ -105,28 +128,36 @@ def eula_true():
 def setup():
     """Runs functions that generate the server files before running
     """
-    if not os.path.isdir(serverDir):
-        print("Server folder doesn't exist. Generating...")
-        os.mkdir(serverDir)
-    download_to_dir(file_webscraper(), serverDir)
-    run(first_launch=True)
+    serverName = input(Fore.YELLOW + Style.BRIGHT + "Input new server name:")
+    os.mkdir(os.path.join(os.getcwd(), serverName))
+    download_to_dir(file_webscraper(), os.path.join(os.getcwd(), serverName))
+    identify_servers()
+    print(serverDir)
+    run(first_launch=True, serverName=serverName)
     eula_true()
     print(Fore.GREEN + Style.BRIGHT + '\nEULA Accepted and server is ready to go!!')
 
 
 def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimum amount of ram alloted" = "-Xms1024M",
         gui: "if True, will show the Mojang UI, else will remain CLI-based" = False,
-        first_launch: "Backend, used to denote if this is part of the Setup" = False):
+        first_launch: "Backend, used to denote if this is part of the Setup" = False, serverName='Server'):
     """Executes the server binary with optional parameters
     """
+    # If multiple folders exist, let user select
+    #TODO
+
     gui = "nogui" if gui is False else ""
     if first_launch:
+        print(os.path.join(serverDir[serverName], 'server.jar'))
+        print(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir[serverName], 'server.jar')}", f"{gui}"])
         subprocess.run(
-            ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir, 'server.jar')}", f"{gui}"],
+            ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join((serverDir[serverName]), 'server.jar')}", f"{gui}"],
             cwd=serverDir, stdout=subprocess.DEVNULL)
+
         return
 
-        # Networking IP information
+
+    # Networking IP information
     print(Fore.YELLOW + Style.BRIGHT + 'Gathering Network Information...\n')
     hostname = socket.gethostname()
     IP_Ad = requests.get('http://ip.42.pl/raw').text
