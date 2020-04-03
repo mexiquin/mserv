@@ -6,8 +6,10 @@ import argh
 import subprocess
 from clint.textui import progress
 from colorama import Fore, Back, Style, init
+
 init(autoreset=True)
-serverDir = os.path.join(os.getcwd(), 'Server')
+#serverDir = os.path.join(os.pardir, os.pardir, os.path.abspath(os.path.dirname(sys.argv[0])), 'Server')
+serverDir = os.path.join(os.pardir, os.pardir, os.getcwd(), 'Server')
 url = "https://www.minecraft.net/en-us/download/server/"
 
 
@@ -33,7 +35,7 @@ def file_webscraper(url=url, search_file='server.jar'):
 def test():
     """For debugging only
     """
-    pass
+    print(serverDir)
 
 
 def fileNameFromURL(url):
