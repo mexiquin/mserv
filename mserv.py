@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, time
+import os
 import requests
 import socket
 from bs4 import BeautifulSoup
@@ -40,14 +40,6 @@ def identify_servers(path=os.getcwd()):
             else:
                 serverDir[os.path.basename(os.path.normpath(subdir))] = subdir
 
-
-
-# use this to execute functions you want to try
-def test():
-    """For debugging only
-    """
-    print(serverDir)
-
 # os.walk, but allows for level distinction
 def walklevel(some_dir, level=1):
     some_dir = some_dir.rstrip(os.path.sep)
@@ -66,12 +58,12 @@ def fileNameFromURL(url):
         return url.rsplit('/', 1)[1]
 
 
-def update():
+def update(serverName):
     """Goes to the official Mojang website and downloads the server.jar file again. This works whether or not the
     executable is new """
     # identify where the server.jar file is located
-    os.remove(f"{os.path.join(serverDir, 'server.jar')}")
-    download_to_dir(file_webscraper(), serverDir)
+    os.remove(f"{os.path.join(serverDir[serverName], 'server.jar')}")
+    download_to_dir(file_webscraper(), serverDir[serverName])
 
 
 def download_to_dir(url, outDir=os.getcwd()):
@@ -103,10 +95,10 @@ def download_to_dir(url, outDir=os.getcwd()):
                 file.flush()
 
 
-def eula_true():
+def eula_true(serverName):
     """Points to the eula.txt generated from the server executable, generates text to auto-accept the eula
     """
-    eula_dir = os.path.join(serverDir, 'eula.txt')
+    eula_dir = os.path.join(serverDir[serverName], 'eula.txt')
     # with is like your try .. finally block in this case
     with open(eula_dir, 'r') as file:
         # read a list of lines into data
@@ -128,13 +120,12 @@ def eula_true():
 def setup():
     """Runs functions that generate the server files before running
     """
-    serverName = input(Fore.YELLOW + Style.BRIGHT + "Input new server name:")
+    serverName = input(Fore.YELLOW + Style.BRIGHT + "Input new server name: ")
     os.mkdir(os.path.join(os.getcwd(), serverName))
     download_to_dir(file_webscraper(), os.path.join(os.getcwd(), serverName))
     identify_servers()
-    print(serverDir)
     run(first_launch=True, serverName=serverName)
-    eula_true()
+    eula_true(serverName)
     print(Fore.GREEN + Style.BRIGHT + '\nEULA Accepted and server is ready to go!!')
 
 
@@ -148,16 +139,25 @@ def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimu
 
     gui = "nogui" if gui is False else ""
     if first_launch:
-        print(os.path.join(serverDir[serverName], 'server.jar'))
-        print(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir[serverName], 'server.jar')}", f"{gui}"])
         subprocess.run(
             ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join((serverDir[serverName]), 'server.jar')}", f"{gui}"],
-            cwd=serverDir, stdout=subprocess.DEVNULL)
+            cwd=serverDir[serverName], stdout=subprocess.DEVNULL)
 
         return
 
-
+    # List all identified server folders and let user select them
+    identify_servers()
+    selectDir = ''
+    if len(serverDir) > 1:
+        print(f"{Fore.YELLOW}{Style.BRIGHT}Choose server to run (enter number): ")
+        for number, item in enumerate(serverDir):
+            print(f"{number} - {item}  ", end=' ',)
+        selectDir = list(serverDir)[int(input())]
+        #TODO
+    else:
+        selectDir=list(serverDir)[0]
     # Networking IP information
+    print(Fore.GREEN + Style.BRIGHT + f"\nStarting {selectDir}\n")
     print(Fore.YELLOW + Style.BRIGHT + 'Gathering Network Information...\n')
     hostname = socket.gethostname()
     IP_Ad = requests.get('http://ip.42.pl/raw').text
@@ -165,8 +165,8 @@ def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimu
         Fore.CYAN + Style.BRIGHT + f"Hostname: {hostname}\nIP Address: {IP_Ad}\nPort:25565")
 
     print("Starting Server...")
-    subprocess.run(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir, 'server.jar')}", f"{gui}"],
-                   cwd=serverDir)
+    subprocess.run(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir[selectDir], 'server.jar')}", f"{gui}"],
+                   cwd=serverDir[selectDir])
 
 
 # TODO
@@ -178,5 +178,5 @@ def GUI():
 
 if __name__ == "__main__":
     parser = argh.ArghParser()
-    parser.add_commands([setup, run, update, test])
+    parser.add_commands([setup, run, update])
     parser.dispatch()

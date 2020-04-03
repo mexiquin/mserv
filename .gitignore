@@ -1,7 +1,8 @@
-/.vscode
 /build
 /dist
 mserv.spec
 /__pycache__
 /bin
 /Server
+/stinky
+/mserv.egg-info
