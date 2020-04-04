@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 setup(
     name='mserv',
     author='Quinton',
-    version='0.5',
+    version='0.6',
     long_description=long_description,
     long_description_content_type="text/markdown",
     description='An attempt at a Minecraft server manager',

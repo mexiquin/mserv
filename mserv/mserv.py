@@ -176,6 +176,8 @@ def GUI():
     pass
 
 def version():
+    """Displays the current version of the program
+    """
     with open('setup.py', 'r') as setup_file:
         data = setup_file.readlines()
     for line in data:
