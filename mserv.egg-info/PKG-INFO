@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: mserv
-Version: 0.5
+Version: 0.6
 Summary: An attempt at a Minecraft server manager
 Home-page: https://github.com/mexiquin/mserv
 Author: Quinton
@@ -24,25 +24,24 @@ Description: # mserv
         - Execute multiple servers at the same time (Probably wont implement...)
         
         # Installation
-        
+        Use Python's package manager pip
+        ```
+        pip install mserv
+        ```
         
         # Generated Help Page
-        ```usage: mserv.py [-h] {setup,run,update,test} ...
+        ```
+        usage: mserv.py [-h] {setup,run,update,version} ...
         
         positional arguments:
-          {setup,run,update,test}
+          {setup,run,update,version}
             setup               Runs functions that generate the server files before
                                 running
             run                 Executes the server binary with optional parameters
-                                Keyword Arguments: max_ram {str} -- Maximum amount of
-                                ram alloted (default: {"-Xmx1024M"}) min_ram {str} --
-                                Minimum amount of ram alloted (default: {"-Xms1024M"})
-                                gui_flag {bool} -- if True, will show the UI, else
-                                will remain CLI-based (default: {False})
             update              Goes to the official Mojang website and downloads the
                                 server.jar file again. This works whether or not the
                                 executable is new
-            test
+            version             Displays the current version of the program
         
         optional arguments:
           -h, --help            show this help message and exit
