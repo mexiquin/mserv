@@ -175,8 +175,18 @@ def GUI():
     """
     pass
 
+def version():
+    with open('setup.py', 'r') as setup_file:
+        data = setup_file.readlines()
+    for line in data:
+        if 'version' in line:
+            print(Fore.MAGENTA + Style.BRIGHT+ f'mserv v{line[13:-3]}')
+
 
 def main():
     parser = argh.ArghParser()
-    parser.add_commands([setup, run, update])
+    parser.add_commands([setup, run, update, version])
     parser.dispatch()
+
+if __name__ == "__main__":
+    main()
