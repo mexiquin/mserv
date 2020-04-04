@@ -176,7 +176,7 @@ def GUI():
     pass
 
 
-if __name__ == "__main__":
+def main():
     parser = argh.ArghParser()
     parser.add_commands([setup, run, update])
     parser.dispatch()
