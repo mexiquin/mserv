@@ -6,3 +6,5 @@ mserv.spec
 /Server
 /stinky
 /mserv.egg-info
+/.vscode
+*.snap

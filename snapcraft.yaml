@@ -1,0 +1,30 @@
+name: mserv
+
+version: git
+
+summary: An attempt at a Minecraft Server manager.
+
+description: |
+  This is a wrapper around the official server.jar from Mojang As of right now, it can:
+  Download and generate files from the official server executable,
+  Run the server,
+  Displays network connection information (public ip, port number) so others can join your server,
+  Can update the server executable (This is still in testing)
+
+confinement: devmode
+
+base: core18
+
+parts:
+  mserv:
+    plugin: python
+    source: https://github.com/mexiquin/mserv.git
+    stage-packages: 
+      - openjdk-11-jdk
+
+apps:
+  mserv:
+    command: mserv
+    environment: 
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH

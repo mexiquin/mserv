@@ -13,14 +13,15 @@ As of right now, it can...
 ## What can it NOT do?
 This script/binary can not:
 - Port forward for you (You have to do that yourself)
-- Update itself (Yet!)
 - Execute multiple servers at the same time (Probably wont implement...)
 
 # Installation
-Use Python's package manager pip
-```
-pip install mserv
-```
+## Make sure you have Java installed on your system
+
+- Use Python's package manager pip
+  ```
+  pip install mserv
+  ```
 
 # Generated Help Page
 ```
