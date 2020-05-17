@@ -11,7 +11,7 @@ description: |
   Displays network connection information (public ip, port number) so others can join your server,
   Can update the server executable (This is still in testing)
 
-confinement: devmode
+confinement: classic
 
 base: core18
 
