@@ -1,35 +1,17 @@
 #!/usr/bin/env python3
-
+from network_func import NetworkDownload
 import os
 import requests
 import socket
 from bs4 import BeautifulSoup
 import argh
 import subprocess
-from clint.textui import progress
 from colorama import Fore, Back, Style, init
 
 init(autoreset=True)
 serverDir = {}
 url = "https://www.minecraft.net/en-us/download/server/"
-
-
-def file_webscraper(url=url, search_file='server.jar'):
-    """Searches a specified webpage searching for a hyperlink to a specified file
-    
-    Keyword Arguments:
-        url {str} -- Url of the webpage to scrape (default: {https://www.minecraft.net/en-us/download/server/})
-        search_file {str} -- The file to search for (default: {'server.jar'})
-    
-    Returns:
-        [str] -- The url of the file we want to access
-    """
-    requester = requests.get(url)
-    soupy = BeautifulSoup(requester.text, features="html.parser")
-    for link in soupy.findAll('a'):
-        if link.get("href") is not None:
-            if search_file in link.get("href"):
-                return link.get('href')
+dlr = NetworkDownload(url, None)
 
 def identify_servers(path=os.getcwd()):
     # Identify any potential servers in current directory
@@ -52,47 +34,14 @@ def walklevel(some_dir, level=1):
             del dirs[:]
 
 
-def fileNameFromURL(url):
-    # Extracts the filename from a given url
-    if url.find('/'):
-        return url.rsplit('/', 1)[1]
-
-
 def update(serverName):
     """Goes to the official Mojang website and downloads the server.jar file again. This works whether or not the
     executable is new """
     # identify where the server.jar file is located
     os.remove(f"{os.path.join(serverDir[serverName], 'server.jar')}")
-    download_to_dir(file_webscraper(), serverDir[serverName])
+    dlr.download_to_dir(dlr.file_webscraper(), serverDir[serverName])
 
 
-def download_to_dir(url, outDir=os.getcwd()):
-    """Downloads a file from a url and saves it in the specified output directory
-    
-    Arguments:
-        url {str} -- The url of the file to be downloaded
-    
-    Keyword Arguments:
-        outDir {str} -- Directory to save the file to (default: {os.getcwd()})
-    """
-    requestor = requests.get(url, stream=True)
-    fileName = fileNameFromURL(url)
-    directory = os.path.join(outDir, fileName)
-    # Exception handling for the HTTPS request
-    try:
-        requestor.raise_for_status()
-    except Exception as urlOof:
-        print(Fore.RED + "Error in accessing URL: %s", urlOof)
-        input("Press ENTER to continue...")
-
-    print(Fore.YELLOW + Style.BRIGHT + "Downloading %s" % fileName)
-    # Some exception handling for file writing stuff
-    with open(directory, "wb") as file:
-        total_length = int(requestor.headers.get('content-length'))
-        for chunk in progress.bar(requestor.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
-            if chunk:
-                file.write(chunk)
-                file.flush()
 
 
 def eula_true(serverName):
@@ -122,7 +71,7 @@ def setup():
     """
     serverName = input(Fore.YELLOW + Style.BRIGHT + "Input new server name: ")
     os.mkdir(os.path.join(os.getcwd(), serverName))
-    download_to_dir(file_webscraper(), os.path.join(os.getcwd(), serverName))
+    dlr.download_to_dir(dlr.file_webscraper(), os.path.join(os.getcwd(), serverName))
     identify_servers()
     run(first_launch=True, serverName=serverName)
     eula_true(serverName)
