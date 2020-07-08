@@ -32,7 +32,7 @@ class NetworkDownload:
         if self.source.find('/'):
             return self.source.rsplit('/', 1)[1]
 
-    def download_to_dir(self):
+    def download_to_dir(self, newDir=None):
         """Downloads a file from a url and saves it in the specified output directory
 
         Arguments:
@@ -43,7 +43,7 @@ class NetworkDownload:
         """
         requestor = requests.get(self.source, stream=True)
         fileName = self._fileNameFromURL()
-        directory = os.path.join(self.dest, fileName)
+        directory = os.path.join(self.dest, fileName) if newDir == None else os.path.join(newDir, fileName)
         # Exception handling for the HTTPS request
         try:
             requestor.raise_for_status()

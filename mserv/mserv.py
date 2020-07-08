@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-from network_func import NetworkDownload
+
+from .network_func import NetworkDownload
 import os
 import requests
 import socket
@@ -39,7 +40,7 @@ def update(serverName):
     executable is new """
     # identify where the server.jar file is located
     os.remove(f"{os.path.join(serverDir[serverName], 'server.jar')}")
-    dlr.download_to_dir(dlr.file_webscraper(), serverDir[serverName])
+    dlr.download_to_dir(serverDir[serverName])
 
 
 
@@ -71,7 +72,7 @@ def setup():
     """
     serverName = input(Fore.YELLOW + Style.BRIGHT + "Input new server name: ")
     os.mkdir(os.path.join(os.getcwd(), serverName))
-    dlr.download_to_dir(dlr.file_webscraper(), os.path.join(os.getcwd(), serverName))
+    dlr.download_to_dir(os.path.join(os.getcwd(), serverName))
     identify_servers()
     run(first_launch=True, serverName=serverName)
     eula_true(serverName)

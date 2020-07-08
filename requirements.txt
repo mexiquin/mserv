@@ -1,5 +1,6 @@
-argh==0.26.2
 clint==0.5.1
 colorama==0.4.3
 requests==2.23.0
-beautifulsoup4==4.8.2
+argh==0.26.2
+beautifulsoup4==4.9.1
+PySimpleGUI==4.24.0
