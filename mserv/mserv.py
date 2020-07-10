@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from .network_func import NetworkDownload
+from network_func import NetworkDownload
+import argparse
 import os
 import requests
 import socket
 from bs4 import BeautifulSoup
-import argh
 import subprocess
 from colorama import Fore, Back, Style, init
 
@@ -78,12 +78,14 @@ def setup():
     eula_true(serverName)
     print(Fore.GREEN + Style.BRIGHT + '\nEULA Accepted and server is ready to go!!')
 
+def testrun(max_ram='val', min_ram='val2'):
+    print(max_ram, min_ram)
 
-def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimum amount of ram alloted" = "-Xms1024M",
-        gui: "if True, will show the Mojang UI, else will remain CLI-based" = False,
-        first_launch: "Backend, used to denote if this is part of the Setup" = False, serverName='Server'):
+def run(max_ram = "-Xmx1024M", min_ram = "-Xms1024M", gui = False,
+        first_launch = False, serverName='Server'):
     """Executes the server binary with optional parameters
     """
+
     # If multiple folders exist, let user select
     #TODO
 
@@ -123,7 +125,7 @@ def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimu
 def GUI():
     """Executes the user interface for mserv, best for people who don't know how to use the command line
     """
-    pass
+    print('gui')
 
 def version():
     """Displays the current version of the program
@@ -136,9 +138,42 @@ def version():
 
 
 def main():
+
+    '''
     parser = argh.ArghParser()
     parser.add_commands([setup, run, update, version])
     parser.dispatch()
+    '''
+
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(help='Commands')
+
+    # Parser for the run command
+    run_cmd = subparsers.add_parser('run', help='Executes the server binary with optional parameters',)
+    run_cmd.add_argument('--max_ram', type=str, default="-Xmx1024M", help='Maximum amount of ram alloted')
+    run_cmd.add_argument('--min_ram', type=str, default="-Xms1024M", help='Minimum amount of ram alloted')
+    run_cmd.add_argument('--gui', '-g', default=False, action='store_true', help='Run using Mojang gui')
+    run_cmd.set_defaults(func=testrun)
+
+    # Parser for the setup command
+    setup_cmd = subparsers.add_parser('setup', help='Runs functions that generate the server files before running')
+    setup_cmd.set_defaults(func=setup)
+
+    # Parser for update command
+    update_cmd = subparsers.add_parser('update', help='Goes to the official Mojang website and downloads the server.jar file again. This works whether or not the executable is new')
+    update_cmd.set_defaults(func=update)
+
+    # Parser for gui command
+    gui_cmd = subparsers.add_parser('gui', help="Executes the user interface for mserv, best for people who don't know how to use the command line")
+    gui_cmd.set_defaults(func=GUI)
+
+    # Parser for version command
+    version_cmd = subparsers.add_parser('version', help='Displays the current version of the program')
+    version_cmd.set_defaults(func=version)
+
+    args = parser.parse_args()
+
+    args.func(args)
 
 if __name__ == "__main__":
     main()
