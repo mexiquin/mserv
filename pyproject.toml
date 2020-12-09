@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "mserv"
+version = "0.8"
+description = "A rough server manager for Minecraft"
+authors = ["Quinton Jasper <dropatuningmetal@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+PyQt5 = "^5.15.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
