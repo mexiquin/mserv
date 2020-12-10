@@ -3,7 +3,7 @@
 import os
 import requests
 import socket
-from bs4 import BeautifulSoup
+import Networking
 import argh
 import subprocess
 from clint.textui import progress
@@ -12,24 +12,8 @@ from colorama import Fore, Back, Style, init
 init(autoreset=True)
 serverDir = {}
 url = "https://www.minecraft.net/en-us/download/server/"
+downloader = Networking(url)
 
-
-def file_webscraper(url=url, search_file='server.jar'):
-    """Searches a specified webpage searching for a hyperlink to a specified file
-    
-    Keyword Arguments:
-        url {str} -- Url of the webpage to scrape (default: {https://www.minecraft.net/en-us/download/server/})
-        search_file {str} -- The file to search for (default: {'server.jar'})
-    
-    Returns:
-        [str] -- The url of the file we want to access
-    """
-    requester = requests.get(url)
-    soupy = BeautifulSoup(requester.text, features="html.parser")
-    for link in soupy.findAll('a'):
-        if link.get("href") is not None:
-            if search_file in link.get("href"):
-                return link.get('href')
 
 def identify_servers(path=os.getcwd()):
     # Identify any potential servers in current directory
@@ -39,6 +23,7 @@ def identify_servers(path=os.getcwd()):
                 serverDir[os.path.basename(os.path.normpath(subdir))].append(subdir)
             else:
                 serverDir[os.path.basename(os.path.normpath(subdir))] = subdir
+
 
 # os.walk, but allows for level distinction
 def walklevel(some_dir, level=1):
@@ -51,48 +36,14 @@ def walklevel(some_dir, level=1):
         if num_sep + level <= num_sep_this:
             del dirs[:]
 
-
-def fileNameFromURL(url):
-    # Extracts the filename from a given url
-    if url.find('/'):
-        return url.rsplit('/', 1)[1]
-
-
 def update(serverName):
     """Goes to the official Mojang website and downloads the server.jar file again. This works whether or not the
     executable is new """
     # identify where the server.jar file is located
     os.remove(f"{os.path.join(serverDir[serverName], 'server.jar')}")
-    download_to_dir(file_webscraper(), serverDir[serverName])
+    downloader.download_to_dir(downloader.file_webscraper(), serverDir[serverName])
 
 
-def download_to_dir(url, outDir=os.getcwd()):
-    """Downloads a file from a url and saves it in the specified output directory
-    
-    Arguments:
-        url {str} -- The url of the file to be downloaded
-    
-    Keyword Arguments:
-        outDir {str} -- Directory to save the file to (default: {os.getcwd()})
-    """
-    requestor = requests.get(url, stream=True)
-    fileName = fileNameFromURL(url)
-    directory = os.path.join(outDir, fileName)
-    # Exception handling for the HTTPS request
-    try:
-        requestor.raise_for_status()
-    except Exception as urlOof:
-        print(Fore.RED + "Error in accessing URL: %s", urlOof)
-        input("Press ENTER to continue...")
-
-    print(Fore.YELLOW + Style.BRIGHT + "Downloading %s" % fileName)
-    # Some exception handling for file writing stuff
-    with open(directory, "wb") as file:
-        total_length = int(requestor.headers.get('content-length'))
-        for chunk in progress.bar(requestor.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
-            if chunk:
-                file.write(chunk)
-                file.flush()
 
 
 def eula_true(serverName):
@@ -135,12 +86,13 @@ def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimu
     """Executes the server binary with optional parameters
     """
     # If multiple folders exist, let user select
-    #TODO
+    # TODO
 
     gui = "nogui" if gui is False else ""
     if first_launch:
         subprocess.run(
-            ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join((serverDir[serverName]), 'server.jar')}", f"{gui}"],
+            ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join((serverDir[serverName]), 'server.jar')}",
+             f"{gui}"],
             cwd=serverDir[serverName], stdout=subprocess.DEVNULL)
 
         return
@@ -151,11 +103,11 @@ def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimu
     if len(serverDir) > 1:
         print(f"{Fore.YELLOW}{Style.BRIGHT}Choose server to run (enter number): ")
         for number, item in enumerate(serverDir):
-            print(f"{number} - {item}  ", end=' ',)
+            print(f"{number} - {item}  ", end=' ', )
         selectDir = list(serverDir)[int(input())]
-        #TODO
+        # TODO
     else:
-        selectDir=list(serverDir)[0]
+        selectDir = list(serverDir)[0]
     # Networking IP information
     print(Fore.GREEN + Style.BRIGHT + f"\nStarting {selectDir}\n")
     print(Fore.YELLOW + Style.BRIGHT + 'Gathering Network Information...\n')
@@ -165,8 +117,9 @@ def run(max_ram: "Maximum amount of ram alloted" = "-Xmx1024M", min_ram: "Minimu
         Fore.CYAN + Style.BRIGHT + f"Hostname: {hostname}\nIP Address: {IP_Ad}\nPort:25565")
 
     print("Starting Server...")
-    subprocess.run(["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir[selectDir], 'server.jar')}", f"{gui}"],
-                   cwd=serverDir[selectDir])
+    subprocess.run(
+        ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir[selectDir], 'server.jar')}", f"{gui}"],
+        cwd=serverDir[selectDir])
 
 
 # TODO
@@ -175,6 +128,7 @@ def GUI():
     """
     pass
 
+
 def version():
     """Displays the current version of the program
     """
@@ -182,13 +136,14 @@ def version():
         data = setup_file.readlines()
     for line in data:
         if 'version' in line:
-            print(Fore.MAGENTA + Style.BRIGHT+ f'mserv v{line[13:-3]}')
+            print(Fore.MAGENTA + Style.BRIGHT + f'mserv v{line[13:-3]}')
 
 
 def main():
     parser = argh.ArghParser()
     parser.add_commands([setup, run, update, version])
     parser.dispatch()
+
 
 if __name__ == "__main__":
     main()
