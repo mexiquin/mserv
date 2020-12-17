@@ -4,9 +4,9 @@ import os
 import requests
 import socket
 import Networking
-import argh
+import click
+import tqdm
 import subprocess
-from clint.textui import progress
 from colorama import Fore, Back, Style, init
 
 init(autoreset=True)
@@ -73,7 +73,7 @@ def setup():
     """
     serverName = input(Fore.YELLOW + Style.BRIGHT + "Input new server name: ")
     os.mkdir(os.path.join(os.getcwd(), serverName))
-    download_to_dir(file_webscraper(), os.path.join(os.getcwd(), serverName))
+    downloader.download_to_dir(downloader.file_webscraper(), os.path.join(os.getcwd(), serverName))
     identify_servers()
     run(first_launch=True, serverName=serverName)
     eula_true(serverName)
@@ -129,19 +129,9 @@ def GUI():
     pass
 
 
-def version():
-    """Displays the current version of the program
-    """
-    with open('../setup.py', 'r') as setup_file:
-        data = setup_file.readlines()
-    for line in data:
-        if 'version' in line:
-            print(Fore.MAGENTA + Style.BRIGHT + f'mserv v{line[13:-3]}')
-
-
 def main():
     parser = argh.ArghParser()
-    parser.add_commands([setup, run, update, version])
+    parser.add_commands([setup, run, update])
     parser.dispatch()
 
 
