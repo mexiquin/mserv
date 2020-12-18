@@ -7,6 +7,12 @@ authors = ["Quinton Jasper <dropatuningmetal@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 PyQt5 = "^5.15.2"
+requests = "^2.25.0"
+beautifulsoup4 = "^4.9.3"
+colorama = "^0.4.4"
+click = "^7.1.2"
+tqdm = "^4.54.1"
+toml = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
