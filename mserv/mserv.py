@@ -9,7 +9,7 @@ import subprocess
 from colorama import Fore, Style, init
 
 # Don't forget to change this number accordingly
-version_num = 0.8
+version_num = "0.8.1"
 
 init(autoreset=True)
 serverDir = {}
