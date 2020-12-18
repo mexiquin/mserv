@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "mserv"
-version = "0.8"
-description = "A rough server manager for Minecraft"
+version = "0.8.1"
+description = "A simple wrapper for managing your Minecraft servers."
 authors = ["Quinton Jasper <dropatuningmetal@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/mexiquin/mserv"
+
 
 [tool.poetry.dependencies]
 python = "^3.9"
