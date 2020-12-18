@@ -3,17 +3,18 @@
 import os
 import requests
 import socket
-import Libs.Networking as Networking
+import mserv.Networking as Networking
 import click
 import subprocess
 from colorama import Fore, Style, init
-import toml
+
+# Don't forget to change this number accordingly
+version_num = 0.8
 
 init(autoreset=True)
 serverDir = {}
 url = "https://www.minecraft.net/en-us/download/server/"
 downloader = Networking.Networking(url)
-version_num = toml.load(os.path.join(os.pardir, 'pyproject.toml'))['tool']['poetry']['version']
 
 
 @click.group()
