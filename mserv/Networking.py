@@ -2,9 +2,11 @@ import os
 
 import requests
 from bs4 import BeautifulSoup
-import tqdm
-from colorama import Fore, Back, Style
+from rich import style
+from rich.progress import track
+from rich.console import Console
 
+console = Console()
 
 class Networking:
     def __init__(self, url, local_dir=os.getcwd()):
@@ -51,21 +53,18 @@ class Networking:
         file_name = self.extract_filename(self.file_webscraper(search_file_name='server.jar'))
         directory = os.path.join(new_dir if new_dir is not None else self.local_dir,
                                  new_filename if new_filename is not None else file_name)
-        print(directory)
+        #print(directory)
         # Exception handling for the HTTPS request
         try:
             requester.raise_for_status()
         except Exception as urlOof:
-            print(Fore.RED + "Error in accessing URL: %s", urlOof)
+            console.print("[bold red]Error in accessing URL: %s[/bold red]", urlOof)
             input("Press ENTER to continue...")
-        print(Fore.YELLOW + Style.BRIGHT + "Downloading %s" % file_name)
+        #console.print("Downloading %s" % file_name, style='bold yellow')
         # Some exception handling for file writing stuff
         with open(directory, "wb") as file:
             total_length = int(requester.headers.get('content-length'))
-            # TODO get tqdm working correctly
-            with tqdm.tqdm(total=total_length) as pbar:
-                for chunk in requester.iter_content(chunk_size=chunksize):  # expected_size=(total_length / 1024) + 1)
-                    if chunk:
-                        file.write(chunk)
-                        file.flush()
-                        pbar.update(chunksize)
+            for chunk in track(requester.iter_content(chunk_size=chunksize), total=(total_length / 1024) + 1, description='Downloading...'):
+                if chunk:
+                    file.write(chunk)
+                    file.flush()

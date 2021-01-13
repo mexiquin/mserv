@@ -1,1 +1,3 @@
 /dist
+mserv/__pycache__/
+.vscode/

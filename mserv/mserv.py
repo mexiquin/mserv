@@ -2,19 +2,26 @@
 
 import os
 import requests
+import sys
 import socket
+import time
+from rich import spinner, style
+from rich import table
 import mserv.Networking as Networking
 import click
 import subprocess
-from colorama import Fore, Style, init
+from rich.console import Console
+from rich.prompt import Prompt, Confirm
+from rich.table import Table
+from rich.box import Box, SIMPLE
 
 # Don't forget to change this number accordingly
-version_num = "0.8.1"
+version_num = "0.8.2"
 
-init(autoreset=True)
 serverDir = {}
 url = "https://www.minecraft.net/en-us/download/server/"
 downloader = Networking.Networking(url)
+console = Console()
 
 
 @click.group()
@@ -57,7 +64,7 @@ def update(server_name):
     downloader.download_to_dir(downloader.file_webscraper(), serverDir[server_name])
 
 
-def eula_true(server_name):
+def eula_true(server_name, accept=True):
     """Points to the eula.txt generated from the server executable, generates text to auto-accept the eula
     """
     eula_dir = os.path.join(serverDir[server_name], 'eula.txt')
@@ -68,11 +75,11 @@ def eula_true(server_name):
 
     # now change the 2nd line, note that you have to add a newline
     if data[-1] != 'eula=true':
-        accept_eula = input("Would you like to accept the Mojang EULA? (Y/n)")
-        if accept_eula.lower == "y" or accept_eula == "":
+        accept_eula = Confirm.ask("[bold yellow]Would you like to accept the Mojang EULA?[/bold yellow]", default=True)
+        if accept_eula is True:
             data[-1] = 'eula=true'
         else:
-            print("EULA not accepted. You can do this later within the 'eula.txt' file")
+            console.print("EULA not accepted. You can do this later within the 'eula.txt' file", style="bold red")
 
         # and write everything back
         with open(eula_dir, 'w') as file:
@@ -85,15 +92,17 @@ def setup():
     Create a new server.
     Runs functions that generate the server files before running.
     """
-    new_server_name = input(Fore.YELLOW + Style.BRIGHT + "Input new server name: ")
+
+    new_server_name = Prompt.ask("[bold yellow]Input new server name: [/bold yellow]")
     new_server_dir = os.path.join(os.getcwd(), new_server_name)
     os.mkdir(new_server_dir)
+
     downloader.download_to_dir(new_dir=new_server_dir, scrape=True)
-    identify_servers()
-    print(Fore.CYAN + Style.BRIGHT + '\nRunning first-time server setup...\n')
-    __run(first_launch=True, server_name=new_server_name)
+    with console.status("[bold green]Generating Server Files") as status:
+        identify_servers()
+        __run(first_launch=True, server_name=new_server_name)
     eula_true(new_server_name)
-    print(Fore.GREEN + Style.BRIGHT + '\nEULA Accepted and server is ready to go!!')
+    console.print('\nEULA Accepted and server is ready to go!!', style='bold green')
 
 
 # Original run function, can operate independent of the argument parser
@@ -105,8 +114,7 @@ def __run(max_ram="-Xmx1024M", min_ram="-Xms1024M", gui=False, server_name="Serv
 
     if first_launch:
         subprocess.run(
-            ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join((serverDir[server_name]), 'server.jar')}",
-             f"{ui}"],
+            ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join((serverDir[server_name]), 'server.jar')}", f"{ui}"],
             cwd=serverDir[server_name], stdout=subprocess.DEVNULL)
 
         return
@@ -114,22 +122,36 @@ def __run(max_ram="-Xmx1024M", min_ram="-Xms1024M", gui=False, server_name="Serv
     # List all identified server folders and let user select them
     identify_servers()
     if len(serverDir) > 1:
-        print(f"{Fore.YELLOW}{Style.BRIGHT}Choose server to run (enter number): ")
-        for number, item in enumerate(serverDir):
-            print(f"{number} - {item}  ", end=' ', )
-        selectDir = list(serverDir)[int(input())]
+        selectDir = Prompt.ask("[bold yellow]Choose server to run[/bold yellow]", choices=serverDir)
     else:
         selectDir = list(serverDir)[0]
+    print(chr(27) + "[2J")
     # Networking IP information
-    print(Fore.GREEN + Style.BRIGHT + f"\nStarting {selectDir}\n")
-    print(Fore.YELLOW + Style.BRIGHT + 'Gathering Network Information...\n')
+    console.print(f"\nStarting {selectDir}\n", style='bold green')
+
     hostname = socket.gethostname()
     IP_Ad = requests.get('http://ip.42.pl/raw').text
-    print(Fore.CYAN + Style.BRIGHT + f"Hostname: {hostname}\nPublic IP Address: {IP_Ad}\nPort:25565")
-    print("Starting Server...")
-    subprocess.run(
-        ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir[selectDir], 'server.jar')}", f"{ui}"],
-        cwd=serverDir[selectDir])
+
+    network_table = Table(title='Network Information',show_header=False, show_lines=True, box=SIMPLE, title_style='bold yellow')
+    network_table.add_column(style='bold cyan', justify='right')
+    network_table.add_column(style='bold green')
+
+    network_table.add_row('Hostname:', hostname)
+    network_table.add_row('Public IP Address:', IP_Ad)
+    network_table.add_row('Port:', '25565')
+
+    console.print(network_table)
+
+    #console.print("Starting Server...", style='bold')
+    try:
+        subprocess.run(
+            ["java", f"{max_ram}", f"{min_ram}", "-jar", f"{os.path.join(serverDir[selectDir], 'server.jar')}", f"{ui}"],
+            cwd=serverDir[selectDir])
+    except KeyboardInterrupt:
+        with console.status(status="[bold red]Server shutting down...[/bold red]", speed=0.5, ):
+            time.sleep(2)
+            sys.exit(0)
+
 
 
 # Alias of the __run function that will be handled by the 'click' argument parser
