@@ -56,7 +56,6 @@ Options:
   --help     Show this message and exit.
 
 Commands:
-  gui     Executes the user interface for mserv
   run
   setup   Create a new server.
   update  Download a fresh server.jar file from Mojang.
