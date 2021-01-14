@@ -164,19 +164,10 @@ def run(max_ram: str, min_ram: str, gui: bool, server_name: str, first_launch=Fa
     __run(max_ram, min_ram, gui, server_name, first_launch)
 
 
-# TODO implement GUI using pyqt
-@mserv_cli.command()
-def GUI():
-    """Executes the user interface for mserv
-    """
-    pass
-
-
 # Adding commands to the mserv_cli function for argument parsing
 mserv_cli.add_command(setup)
 mserv_cli.add_command(update)
 mserv_cli.add_command(run)
-mserv_cli.add_command(GUI)
 
 if __name__ == "__main__":
     mserv_cli()
