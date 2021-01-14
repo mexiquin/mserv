@@ -20,6 +20,7 @@ As of right now, it can...
 - Start and shutdown the server
 - Displays network connection information (public ip, port number) so others can join your server
 - Can update the server executable (This is still in testing)
+- Update itself (just run ```pip install --upgrade mserv```)
 
 ## What can it NOT do?
 This script can not:
