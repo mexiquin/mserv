@@ -28,7 +28,7 @@ This script can not:
 - Execute multiple servers at the same time
 
 # Requirements
-1. Java (chances are, if you're running minecraft, you have Java installed)
+1. Java
 2. Python version 3.9 or above
 
 # Installation
