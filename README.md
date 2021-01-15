@@ -27,9 +27,11 @@ This script can not:
 - Port forward for you (You have to do that yourself)
 - Execute multiple servers at the same time
 
-# Installation
+# Requirements
+1. Java (chances are, if you're running minecraft, you have Java installed)
+2. Python version 3.9 or above
 
-- Requires system-wide Java JRE to be installed
+# Installation
 
 1. EASY - Use Python's package manager pip:
   ```shell
