@@ -3,7 +3,7 @@ A simple wrapper for managing your Minecraft servers.
 
 ## What is it?
 Mserv is a little commandline utility I wrote in Python to help me better
-manage my, and my friend's Minecraft servers.  
+manage my, and my friends' Minecraft servers.  
 
 Mojang offers a DIY *server.jar* file 
 which you can execute and host a server on your own PC for free. But, what if I wanted
