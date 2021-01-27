@@ -20,4 +20,4 @@ deploy:
         - pip install poetry
         - poetry config virtualenvs.create false
         - poetry install 
-        - poetry publish --build -u mexiquin -p $uperm@n$lipper$1A
+        - poetry publish --build --dry-run -u mexiquin -p $uperm@n$lipper$1A
