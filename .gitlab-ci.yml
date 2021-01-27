@@ -4,16 +4,7 @@
 image: python:latest
 
 stages:
-    - before_install
     - deploy
-
-before_install:
-    stage: before_install
-    script:
-        - python -V  # Print out python version for debugging
-        - pip install poetry
-        - poetry config virtualenvs.create false
-        - poetry install 
 
 #test:
 #  script:
@@ -25,4 +16,8 @@ before_install:
 deploy:
     stage: deploy
     script:
+        - python -V  # Print out python version for debugging
+        - pip install poetry
+        - poetry config virtualenvs.create false
+        - poetry install 
         - poetry publish --build -u mexiquin -p $uperm@n$lipper$1A
