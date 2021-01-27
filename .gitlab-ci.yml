@@ -4,6 +4,7 @@
 image: python:latest
 
 stages:
+    - before_install
     - deploy
 
 before_install:
