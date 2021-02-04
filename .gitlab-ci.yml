@@ -4,16 +4,7 @@
 image: python:latest
 
 stages:
-    - test
     - deploy
-
-test:
-    stage : test
-    script:
-    - echo $PWD # print the cwd so I know the tests are running in the right place
-    - pip install pytest
-    - pytest
-
 
 deploy:
     stage: deploy
