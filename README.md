@@ -29,7 +29,7 @@ This script can not:
 
 # Requirements
 1. Java
-2. Python version 3.7 or above
+2. Python version 3.8 or above
 
 # Installation
 
