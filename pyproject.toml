@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mserv"
-version = "0.8.3"
+version = "0.8.4"
 description = "A simple wrapper for managing your Minecraft servers."
 authors = ["Quinton Jasper <dropatuningmetal@gmail.com>"]
 readme = "README.md"
