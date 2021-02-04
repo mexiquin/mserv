@@ -22,4 +22,4 @@ deploy:
         - pip install poetry
         - poetry config virtualenvs.create false
         - poetry install 
-        - poetry publish --build --dry-run -u $PYPI_UNAME -p $PYPI_PASS
+        - poetry publish --build -u $PYPI_UNAME -p $PYPI_PASS
