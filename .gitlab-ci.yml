@@ -4,13 +4,15 @@
 image: python:latest
 
 stages:
+    - test
     - deploy
 
-#test:
-#  script:
-#    - python setup.py test
-#    - pip install tox flake8  # you can also use tox
-#    - tox -e py36,flake8
+test:
+    stage : test
+    script:
+    - echo $PWD # print the cwd so I know the tests are running in the right place
+    - pip install pytest
+    - pytest
 
 
 deploy:
