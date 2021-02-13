@@ -47,7 +47,7 @@ git clone https://github.com/mexiquin/mserv.git
 
 Then execute mserv.py located in the *mserv* directory
 ```shell
-python3 ./mserv/mserv/mserv.py
+python3 ./mserv/mserv/mserv.py {command}
 ```
 
 # Generated Help Page
