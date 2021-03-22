@@ -28,8 +28,8 @@ This script can not:
 - Execute multiple servers at the same time
 
 # Requirements
-1. Java
-2. Python version 3.8 or above
+1. Java (to run the server)
+2. Python version 3.8 or above (to run this code)
 
 # Installation
 
@@ -49,6 +49,23 @@ Then execute mserv.py located in the *mserv* directory
 ```shell
 python3 ./mserv/mserv/mserv.py {command}
 ```
+
+# Usage
+
+## Setup
+To start using mserv, you have to create a new server folder. Do this by running the:
+```shell
+mserv setup
+```
+command. This will create a new folder in your current working directory which will hold all of 
+the server files.
+
+## Running
+To actually start the server you use the command:
+```shell
+mserv run
+```
+this will provide some useful networking information (eg. public IP address when playing with others), as well as spin-up the server
 
 # Generated Help Page
 ```
