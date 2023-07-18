@@ -1,3 +1,1 @@
-/dist
-mserv/__pycache__/
-.vscode
+/node_modules

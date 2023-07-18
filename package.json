@@ -1,0 +1,28 @@
+{
+  "name": "mserv",
+  "version": "0.0.1",
+  "description": "Easily manage your MineCraft servers from your browser",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mexiquin/mserv.git"
+  },
+  "keywords": [
+    "minecraft",
+    "server",
+    "manager"
+  ],
+  "author": "Quinton Jasper",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mexiquin/mserv/issues"
+  },
+  "homepage": "https://github.com/mexiquin/mserv#readme",
+  "devDependencies": {
+    "@types/node": "^20.4.2"
+  }
+}
