@@ -26,14 +26,22 @@ class MCServer {
 
     stop() {
         // TODO
+        // graceful shutdown server
+        // if server is not shutdown in 15 seconds, force shutdown
     }
 
     restart() {
         // TODO
+        // graceful shutdown server
+        // start server
     }
 
     setup() {
         // TODO
+        // download server to server_dir
+        // execute server jar for first time
+        // accept eula
+        // setup complete
     }
 
     set_eula_dir(dir) {
@@ -48,6 +56,10 @@ class MCServer {
 
     update_eula(accept=true) {
         // TODO
+        // open eula.txt
+        // change eula= to "accept" value
+        // save eula.txt
+
     }
 
     is_valid_server() {

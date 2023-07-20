@@ -1,14 +1,16 @@
 import http from 'http';
 
 // Searches a specified webpage searching for a hyperlink to a specified file
-// Returns the url of the identified hyperlink
+// Returns an object containing the url of the identified hyperlink 
+// and the name of the file respectively
 function scrape_file(url, search_file_name) {
     let requester = http.get(url);
     let text = requester.text;
     for (let link of text.findAll('a')) {
         if (link.get("href") !== null) {
             if (search_file_name in link.get("href")) {
-                return link.get('href');
+                // name should be the inner text of the <a> tag
+                return {link: link.get('href'), name: link.text};
             }
         }
     }
